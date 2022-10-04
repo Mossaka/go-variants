@@ -2,44 +2,29 @@ package examples
 
 // roundtrip-option: func(a: option<u32>) -> option<u8>
 
-type OptionU8 interface {
-	IsOptionU8()
+type Option[V any] interface {
+	IsOption()
 }
 
-type OptionU8Some struct {
-	Val uint8
+type OptionSome[V any] struct {
+	Val V
 }
 
-func (OptionU8Some) IsOptionU8() {}
+func (OptionSome[V]) IsOption() {}
 
-type OptionU8None struct {
+type OptionNone struct {
 }
 
-func (OptionU8None) IsOptionU8() {}
-
-type OptionU32 interface {
-	IsOptionU32()
-}
-
-type OptionU32Some struct {
-	Val uint32
-}
-
-func (OptionU32Some) IsOptionU32() {}
-
-type OptionU32None struct {
-}
-
-func (OptionU32None) IsOptionU32() {}
+func (OptionNone) IsOption() {}
 
 // roundtrip-option: func(a: option<u32>) -> option<u8>
 
-func RoundtripOption(a OptionU32) OptionU8 {
+func RoundtripOption(a Option[uint32]) Option[uint8] {
 	switch a := a.(type) {
-	case OptionU32Some:
-		return OptionU8Some{Val: uint8(a.Val)}
-	case OptionU32None:
-		return OptionU8None{}
+	case OptionSome[uint32]:
+		return OptionSome[uint8]{Val: uint8(a.Val)}
+	case OptionNone:
+		return a
 	}
 	panic("unreachable")
 }
